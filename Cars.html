@@ -1,0 +1,428 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ar" lang="ar" dir="rtl">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>السيارات المتاحة - موقع تأجير السيارات</title>
+    <style type="text/css">
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            direction: rtl;
+        }
+        #header {
+            background-color: #2c3e50;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+        #nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0 0 0;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+        }
+        #nav ul li a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        #nav ul li a.active {
+            color: #e74c3c;
+            border-bottom: 2px solid #e74c3c;
+            padding-bottom: 3px;
+        }
+        #content {
+            padding: 30px;
+            max-width: 1050px;
+            margin: 20px auto;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        th {
+            background-color: #2980b9;
+            color: white;
+        }
+        .details-row {
+            display: none;
+            background-color: #f9f9f9;
+            text-align: right;
+        }
+        .details-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 10px;
+        }
+        .car-img {
+            width: 180px;
+            height: 110px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        .details-info {
+            color: #444;
+            font-size: 0.95em;
+            line-height: 1.8;
+        }
+        .btn-submit {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1.1em;
+            margin-top: 20px;
+            display: block;
+            width: 200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .btn-submit:hover {
+            background: #219653;
+        }
+        #booking-section {
+            display: none;
+            margin-top: 30px;
+            padding: 25px;
+            background: #ecf0f1;
+            border-radius: 8px;
+            border: 1px solid #bdc3c7;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .form-group {
+            text-align: right;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        #footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 30px;
+        }
+    </style>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // إظهار وإخفاء تفاصيل السيارة والصورة عند إدخال علامة الصح
+            $('.toggle-details').change(function() {
+                var targetId = $(this).data('target');
+                if($(this).is(':checked')) {
+                    $('#' + targetId).fadeIn();
+                } else {
+                    $('#' + targetId).fadeOut();
+                }
+            });
+
+            // عند الضغط على زر متابعة
+            $('#proceedBtn').click(function() {
+                var selectedCount = $('.select-car:checked').length;
+                if(selectedCount === 0) {
+                    alert("الرجاء اختيار سيارة واحدة على الأقل للمتابعة!");
+                    return;
+                }
+                $('#booking-section').fadeIn();
+                $('html, body').animate({
+                    scrollTop: $("#booking-section").offset().top
+                }, 500);
+            });
+
+            // تحقق من البيانات عند إرسال الطلب
+            $('#bookingForm').submit(function(e) {
+                e.preventDefault();
+                var fullname = $('#fullname').val();
+                var nationalId = $('#nationalId').val();
+                var arabicRegex = /^[\u0600-\u06FF\s]+$/;
+                var numberRegex = /^[0-9]+$/;
+                
+                if(!arabicRegex.test(fullname)) {
+                    alert("الرجاء إدخال الاسم الكامل باللغة العربية (أحرف هجائية عربية فقط)!");
+                    return;
+                }
+
+                if(!numberRegex.test(nationalId) || nationalId.length < 11) {
+                    alert("الرجاء إدخال رقم وطني صحيح يتكون من أرقام فقط!");
+                    return;
+                }
+
+                alert("تم إرسال طلب الحجز بنجاح! شكراً لاستخدامك موقعنا.");
+                $('#booking-section').fadeOut();
+                this.reset();
+            });
+        });
+    </script>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <div id="header">
+        <h1>موقع تأجير السيارات الفاخرة</h1>
+        <div id="nav">
+            <ul>
+                <li><a href="home.html">الرئيسية</a></li>
+                <li><a href="Cars.html" class="active">السيارات المتاحة</a></li>
+                <li><a href="AboutUs.html">عن الشركة</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content Section -->
+    <div id="content">
+        <h2>جدول السيارات المتاحة للحجز</h2>
+        <p>اختر السيارة المناسبة، واستعرض تفاصيلها وصورتها الإضافية، ثم تابع لتأكيد الحجز:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>الرمز</th>
+                    <th>الموديل</th>
+                    <th>سنة الصنع</th>
+                    <th>السعر اليومي</th>
+                    <th>إظهار التفاصيل</th>
+                    <th>اختيار</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Car 1 -->
+                <tr>
+                    <td>CR-001</td>
+                    <td>Toyota Corolla</td>
+                    <td>2023</td>
+                    <td>250000 ل.س</td>
+                    <td><input type="checkbox" class="toggle-details" data-target="details-1" /></td>
+                    <td><input type="checkbox" class="select-car" name="car" value="CR-001" /></td>
+                </tr>
+                <tr id="details-1" class="details-row">
+                    <td colspan="6">
+                        <div class="details-container">
+                            <img src="https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&amp;fit=crop&amp;w=400&amp;q=80" alt="Toyota Corolla" class="car-img" />
+                            <div class="details-info">
+                                <strong>تفاصيل إضافية:</strong> نوع الوقود: بنزين | ناقل الحركة: أوتوماتيك | عدد المقاعد: 5 | العداد: 15,000 كم | اللون: أبيض
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Car 2 -->
+                <tr>
+                    <td>CR-002</td>
+                    <td>Kia Sportage</td>
+                    <td>2022</td>
+                    <td>400000 ل.س</td>
+                    <td><input type="checkbox" class="toggle-details" data-target="details-2" /></td>
+                    <td><input type="checkbox" class="select-car" name="car" value="CR-002" /></td>
+                </tr>
+                <tr id="details-2" class="details-row">
+                    <td colspan="6">
+                        <div class="details-container">
+                            <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&amp;fit=crop&amp;w=400&amp;q=80" alt="Kia Sportage" class="car-img" />
+                            <div class="details-info">
+                                <strong>تفاصيل إضافية:</strong> نوع الوقود: بنزين | ناقل الحركة: أوتوماتيك | عدد المقاعد: 5 | العداد: 30,000 كم | اللون: أسود
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Car 3 -->
+                <tr>
+                    <td>CR-003</td>
+                    <td>Hyundai Elantra</td>
+                    <td>2024</td>
+                    <td>300000 ل.س</td>
+                    <td><input type="checkbox" class="toggle-details" data-target="details-3" /></td>
+                    <td><input type="checkbox" class="select-car" name="car" value="CR-003" /></td>
+                </tr>
+                <tr id="details-3" class="details-row">
+                    <td colspan="6">
+                        <div class="details-container">
+                            <img src="https://images.unsplash.com/photo-1590362891991-f776e747a588?auto=format&amp;fit=crop&amp;w=400&amp;q=80" alt="Hyundai Elantra" class="car-img" />
+                            <div class="details-info">
+                                <strong>تفاصيل إضافية:</strong> نوع الوقود: بنزين | ناقل الحركة: أوتوماتيك | عدد المقاعد: 5 | العداد: 5,000 كم | اللون: فضي
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Car 4 -->
+                <tr>
+                    <td>CR-004</td>
+                    <td>Chevrolet Spark</td>
+                    <td>2021</td>
+                    <td>180000 ل.س</td>
+                    <td><input type="checkbox" class="toggle-details" data-target="details-4" /></td>
+                    <td><input type="checkbox" class="select-car" name="car" value="CR-004" /></td>
+                </tr>
+                <tr id="details-4" class="details-row">
+                    <td colspan="6">
+                        <div class="details-container">
+                            <img src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&amp;fit=crop&amp;w=400&amp;q=80" alt="Chevrolet Spark" class="car-img" />
+                            <div class="details-info">
+                                <strong>تفاصيل إضافية:</strong> نوع الوقود: بنزين | ناقل الحركة: يدوي | عدد المقاعد: 4 | العداد: 45,000 كم | اللون: أحمر
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Car 5 -->
+                <tr>
+                    <td>CR-005</td>
+                    <td>Nissan Qashqai</td>
+                    <td>2023</td>
+                    <td>350000 ل.س</td>
+                    <td><input type="checkbox" class="toggle-details" data-target="details-5" /></td>
+                    <td><input type="checkbox" class="select-car" name="car" value="CR-005" /></td>
+                </tr>
+                <tr id="details-5" class="details-row">
+                    <td colspan="6">
+                        <div class="details-container">
+                            <img src="https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&amp;fit=crop&amp;w=400&amp;q=80" alt="Nissan Qashqai" class="car-img" />
+                            <div class="details-info">
+                                <strong>تفاصيل إضافية:</strong> نوع الوقود: بنزين | ناقل الحركة: أوتوماتيك | عدد المقاعد: 5 | العداد: 18,000 كم | اللون: كحلي
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Car 6 -->
+                <tr>
+                    <td>CR-006</td>
+                    <td>BMW 5 Series</td>
+                    <td>2023</td>
+                    <td>650000 ل.س</td>
+                    <td><input type="checkbox" class="toggle-details" data-target="details-6" /></td>
+                    <td><input type="checkbox" class="select-car" name="car" value="CR-006" /></td>
+                </tr>
+                <tr id="details-6" class="details-row">
+                    <td colspan="6">
+                        <div class="details-container">
+                            <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&amp;fit=crop&amp;w=400&amp;q=80" alt="BMW 5 Series" class="car-img" />
+                            <div class="details-info">
+                                <strong>تفاصيل إضافية:</strong> نوع الوقود: بنزين | ناقل الحركة: أوتوماتيك | عدد المقاعد: 5 | العداد: 12,000 كم | اللون: كحلي ميتاليك
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Car 7 -->
+                <tr>
+                    <td>CR-007</td>
+                    <td>Mercedes C-Class</td>
+                    <td>2022</td>
+                    <td>600000 ل.س</td>
+                    <td><input type="checkbox" class="toggle-details" data-target="details-7" /></td>
+                    <td><input type="checkbox" class="select-car" name="car" value="CR-007" /></td>
+                </tr>
+                <tr id="details-7" class="details-row">
+                    <td colspan="6">
+                        <div class="details-container">
+                            <img src="https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&amp;fit=crop&amp;w=400&amp;q=80" alt="Mercedes C-Class" class="car-img" />
+                            <div class="details-info">
+                                <strong>تفاصيل إضافية:</strong> نوع الوقود: بنزين | ناقل الحركة: أوتوماتيك | عدد المقاعد: 5 | العداد: 22,000 كم | اللون: رمادي
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Car 8 -->
+                <tr>
+                    <td>CR-008</td>
+                    <td>Audi A4</td>
+                    <td>2024</td>
+                    <td>580000 ل.س</td>
+                    <td><input type="checkbox" class="toggle-details" data-target="details-8" /></td>
+                    <td><input type="checkbox" class="select-car" name="car" value="CR-008" /></td>
+                </tr>
+                <tr id="details-8" class="details-row">
+                    <td colspan="6">
+                        <div class="details-container">
+                            <img src="https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&amp;fit=crop&amp;w=400&amp;q=80" alt="Audi A4" class="car-img" />
+                            <div class="details-info">
+                                <strong>تفاصيل إضافية:</strong> نوع الوقود: بنزين | ناقل الحركة: أوتوماتيك | عدد المقاعد: 5 | العداد: 8,000 كم | اللون: أزرق
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- زر متابعة -->
+        <button type="button" id="proceedBtn" class="btn-submit">متابعة</button>
+
+        <!-- نموذج الحجز التفصيلي -->
+        <div id="booking-section">
+            <h3>نموذج معلومات العميل للحجز</h3>
+            <form id="bookingForm" action="#" method="post">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="fullname">الاسم الكامل (أحرف عربية فقط):</label>
+                        <input type="text" id="fullname" name="fullname" required="required" placeholder="مثال: مجد أحمد علي" />
+                    </div>
+                    <div class="form-group">
+                        <label for="nationalId">الرقم الوطني:</label>
+                        <input type="text" id="nationalId" name="nationalId" required="required" placeholder="أدخل الرقم الوطني (11 رقم)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="idNumber">رقم الهوية / جواز السفر:</label>
+                        <input type="text" id="idNumber" name="idNumber" required="required" placeholder="رقم الهوية أو الجواز" />
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">رقم الهاتف التواصل:</label>
+                        <input type="text" id="phone" name="phone" required="required" placeholder="مثال: 0912345678" />
+                    </div>
+                    <div class="form-group">
+                        <label for="startDate">تاريخ بدء الحجز:</label>
+                        <input type="date" id="startDate" name="startDate" required="required" />
+                    </div>
+                    <div class="form-group">
+                        <label for="days">عدد أيام الإيجار:</label>
+                        <input type="number" id="days" name="days" min="1" value="1" required="required" />
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit" style="margin-top: 20px;">إرسال طلب الحجز</button>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- Footer Section -->
+    <div id="footer">
+        <p>&copy; 2026 جميع الحقوق محفوظة - فريق عمل الجامعة الافتراضية السورية SVU</p>
+    </div>
+
+</body>
+</html>
